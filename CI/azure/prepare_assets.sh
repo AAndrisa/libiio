@@ -119,4 +119,16 @@ check_artifacts() {
 	done < "artifact_manifest.txt"
 }
 
+package_repository_artifacts() {
+        cd ${BUILD_ARTIFACTSTAGINGDIRECTORY}
+        ${BUILD_REPOSITORY_LOCALPATH}/CI/azure/generate_source.sh ${VERSION}
+        
+        # move to Debian folder where .deb file is found
+        cd Debian12-arm
+        find . -name '*.tar.gz' -exec mv {} "libiio_${VERSION}_armhf.tar.gz" ";"
+        find . -name '*.deb' -exec mv {} "libiio_${VERSION}_armhf.deb" ";"
+        cp ../libiio.orig.tar.gz .
+        cp ../"libiio_${VERSION}.dst" .
+}
+
 "${1}"_artifacts
