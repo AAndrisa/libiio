@@ -125,7 +125,7 @@ package_repository_artifacts() {
         find . -name '*.tar.gz' -exec mv {} "libiio_${VERSION}_armhf.tar.gz" ";"
         find . -name '*.deb' -exec mv {} "libiio_${VERSION}_armhf.deb" ";"
         cp ../libiio.orig.tar.gz .
-        cp ../"libiio_${VERSION}.dst" .
+        cp ../"libiio_${VERSION}.dsc" .
 }
 
 "${1}"_artifacts
