@@ -367,12 +367,17 @@ if (GIT_FOUND)
 endif()
 
 if (NOT LIBIIO_VERSION_GIT)
-	set(LIBIIO_VERSION_GIT v${VERSION})
+	set(LIBIIO_VERSION_GIT mergee)
+endif()
+
+set(IS_RELEASE_ENV $ENV{IS_RELEASE})
+if (NOT IS_RELEASE_ENV)
+	set(LIBIIO_VERSION_GIT testnop)
 endif()
 
 set(LIBIIO_VERSION ${VERSION}.g${LIBIIO_VERSION_GIT})
 file(WRITE ${CMAKE_BINARY_DIR}/.version ${LIBIIO_VERSION})
-
+message(STATUS "VERSION!!!!! ${LIBIIO_VERSION}")
 if(WITH_LOCAL_BACKEND)
 	if (NO_THREADS)
 		message(SEND_ERROR "Local backend require threads.")
