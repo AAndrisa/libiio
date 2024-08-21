@@ -10,8 +10,17 @@ echo "Running cmake for $COMPILER on 64 bit..."
 mkdir build-x64
 cp .\libiio.iss.cmakein .\build-x64
 cd build-x64
-
-cmake -G "$COMPILER" -DPYTHON_EXECUTABLE:FILEPATH=$(python -c "import os, sys; print(os.path.dirname(sys.executable) + '\python.exe')") -DCMAKE_SYSTEM_PREFIX_PATH="C:" -Werror=dev -DCOMPILE_WARNING_AS_ERROR=ON -DENABLE_IPV6=ON -DWITH_USB_BACKEND=ON -DWITH_SERIAL_BACKEND=ON -DPYTHON_BINDINGS=ON -DCPP_BINDINGS=ON -DCSHARP_BINDINGS:BOOL=$USE_CSHARP -DLIBXML2_LIBRARIES="C:\\libs\\64\\libxml2.lib" -DLIBUSB_LIBRARIES="C:\\libs\\64\\libusb-1.0.lib" -DLIBSERIALPORT_LIBRARIES="C:\\libs\\64\\libserialport.dll.a" -DLIBUSB_INCLUDE_DIR="C:\\include\\libusb-1.0" -DLIBXML2_INCLUDE_DIR="C:\\include\\libxml2" -DLIBZSTD_INCLUDE_DIR="C:\\include" -DLIBZSTD_LIBRARIES="C:\\libs\\64\\libzstd.dll.a" ..
+if ( "$COMPILER" -eq "Visual Studio 17 2022" ){
+	$VS_version="VS2022"
+}elseif ( "$COMPILER" -eq "Visual Studio 16 2019" ) {
+	$VS_version="VS2019"
+}
+cmake -G "$COMPILER" -DPYTHON_EXECUTABLE:FILEPATH=$(python -c "import os, sys; print(os.path.dirname(sys.executable) + '\python.exe')") -DCMAKE_SYSTEM_PREFIX_PATH="C:" `
+-Werror=dev -DCOMPILE_WARNING_AS_ERROR=ON -DENABLE_IPV6=ON -DWITH_USB_BACKEND=ON -DWITH_SERIAL_BACKEND=ON -DPYTHON_BINDINGS=ON -DCPP_BINDINGS=ON -DCSHARP_BINDINGS:BOOL="$USE_CSHARP" `
+-DLIBXML2_LIBRARIES="$Env:BUILD_SOURCESDIRECTORY\deps\libxml2-install\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="$Env:BUILD_SOURCESDIRECTORY\deps\libxml2-install\include\libxml2" `
+-DLIBUSB_LIBRARIES="$Env:BUILD_SOURCESDIRECTORY\deps\libusb\$VS_version\MS64\dll\libusb-1.0.lib" -DLIBUSB_INCLUDE_DIR="$Env:BUILD_SOURCESDIRECTORY\deps\libusb\include" `
+-DLIBSERIALPORT_INCLUDE_DIR="$Env:BUILD_SOURCESDIRECTORY\deps\libserialport" -DLIBSERIALPORT_LIBRARIES="$Env:BUILD_SOURCESDIRECTORY\deps\libserialport\x64\Release\libserialport.lib" `
+-DLIBZSTD_INCLUDE_DIR="$Env:BUILD_SOURCESDIRECTORY\deps\zstd\lib" -DLIBZSTD_LIBRARIES="$Env:BUILD_SOURCESDIRECTORY\deps\zstd\build\VS2010\bin\x64_Release\libzstd.lib" ..
 
 cmake --build . --config Release
 if ( $LASTEXITCODE -ne 0 ) {
