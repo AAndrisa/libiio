@@ -24,6 +24,7 @@ SET msbuild="%%F"
 :: clone the zstd repo and build it with the desierd configuration
 :: !! de ales release specific
 git clone https://github.com/facebook/zstd.git
+7z a -tzip ..\Windows-msvc-deps.zip .\*
 %msbuild% .\zstd\build\VS2010\zstd.sln /p:Platform=%ARCH% /p:Configuration=Release /p:PlatformToolset=%PLATFORM_TOOLSET%
 
 :: download libusb release
@@ -32,6 +33,7 @@ wget https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.7z
 
 :: download and build libxml2 library with cmake
 wget https://download.gnome.org/sources/libxml2/2.9/libxml2-2.9.14.tar.xz
+dir
 cmake -E tar xf .\libxml2-2.9.14.tar.xz
 cmake -DCMAKE_INSTALL_PREFIX=libxml2-install -DLIBXML2_WITH_ICONV=OFF -DLIBXML2_WITH_LZMA=OFF -DLIBXML2_WITH_PYTHON=OFF -DLIBXML2_WITH_ZLIB=OFF -S .\libxml2-2.9.14\ -B libxml2-build
 cmake --build libxml2-build --config Release --target install
@@ -40,3 +42,5 @@ cmake --build libxml2-build --config Release --target install
 :: !! de ales release specific
 git clone https://github.com/sigrokproject/libserialport.git
 %msbuild% .\libserialport\libserialport.vcxproj /p:Platform=%ARCH% /p:Configuration=Release /p:PlatformToolset=%PLATFORM_TOOLSET%
+
+

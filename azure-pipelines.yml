@@ -193,14 +193,12 @@ stages:
           COMPILER: 'Visual Studio 17 2022'
           ARCH: 'x64'
           PLATFORM_TOOLSET: 'v143'
-          USE_CSHARP: 'ON'
           artifactName: 'Windows-VS-2022-x64'
         VS2019:
           vmImage: 'windows-2019'
           COMPILER: 'Visual Studio 16 2019'
           ARCH: 'x64'
           PLATFORM_TOOLSET: 'v142'
-          USE_CSHARP: 'ON'
           artifactName: 'Windows-VS-2019-x64'
     pool:
       vmImage: $[ variables['vmImage'] ]
@@ -217,16 +215,15 @@ stages:
         script: |
           git submodule update --init
           .\CI\azure\windows_build_deps.cmd
-
     - task: PowerShell@2
       inputs:
         targetType: 'filePath'
-        filePath: .\CI\build_win.ps1
+        filePath: .\CI\build_win_msvc.ps1
       displayName: 'Build'
     - task: CopyFiles@2
       displayName: 'Copy libraries'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-$(ARCH)/Release'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-msvc/Release'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: CopyFiles@2
       displayName: 'Copy public headers'
@@ -236,20 +233,26 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy .exe files'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-$(ARCH)/utils/Release'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-msvc/utils/Release'
         contents: '*.exe'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: CopyFiles@2
       displayName: 'Copy .tar.gz files'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-x64/bindings/python'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-msvc/bindings/python'
         contents: '*.gz'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: CopyFiles@2
       displayName: 'Copy libiio-sharp.dll file'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-$(ARCH)/bindings/csharp'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-msvc/bindings/csharp'
         contents: 'libiio-sharp.dll'
+        targetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: CopyFiles@2
+      displayName: 'Copy libiio-sharp.dll file'
+      inputs:
+        sourceFolder: '$(Agent.BuildDirectory)/s/'
+        contents: 'Windows-msvc-deps.zip'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PowerShell@2
       displayName: 'Copy dependencies'
