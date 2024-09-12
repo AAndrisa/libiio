@@ -20,7 +20,7 @@ install_pacman_deps() {
     mingw-w64-x86_64-gcc \
     cmake 
     "
-    pacman -S --noconfirm --needed $WINDEPS
+    pacman -S --noconfirm --needed ${WINDEPS}
 }
 
 build_libiio() {

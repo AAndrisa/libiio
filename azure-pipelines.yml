@@ -144,7 +144,7 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy .exe files'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-x64/utils'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-mingw/utils'
         contents: '*.exe'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: CopyFiles@2
@@ -154,17 +154,18 @@ stages:
         contents: 'iio.h'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: CopyFiles@2
-      displayName: 'Copy libiio.dll and libiio.dll.a'
+      displayName: 'Copy libiio.dll, libiio.dll.a and libiio1.dll'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-x64'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-mingw'
         contents: |
           libiio.dll
           libiio.dll.a
+          libiio1.dll
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: CopyFiles@2
       displayName: 'Copy .tar.gz files'
       inputs:
-        sourceFolder: '$(Agent.BuildDirectory)/s/build-x64/bindings/python'
+        sourceFolder: '$(Agent.BuildDirectory)/s/build-mingw/bindings/python'
         contents: '*.gz'
         targetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PowerShell@2
