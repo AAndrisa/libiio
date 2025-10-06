@@ -79,7 +79,8 @@ jobs:
       sudo apt install curl
       if curl -s "https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels" | grep '"name": "documentation"'
       then
-        echo "##vso[task.setvariable variable=prHasCILabel;isOutput=true]true"
+        echo "##vso[task.setvariable variable=prHasCILabel;isOutput=false]false"
+        echo "[INFO] documentation label found, skipping build!"
         echo "[INFO] documentation label found!"
       fi
     displayName: Check for CI label build on PR
@@ -109,6 +110,7 @@ jobs:
 #   #############################################
 - job: MinGWBuilds
   dependsOn: LinuxBuilds
+  condition: eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true)
   strategy:
     matrix:
       MinGW_W64:
