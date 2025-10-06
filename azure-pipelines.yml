@@ -36,7 +36,6 @@ pr:
   #############################################
 jobs:
 - job: LinuxBuilds
-  condition: variables.skipBuild
   # Host Box
   pool:
     vmImage: 'ubuntu-latest'
@@ -78,13 +77,14 @@ jobs:
     persistCredentials: true
   - bash: |
       sudo apt install curl
-      echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels"
       if curl -s "https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels" | grep '"name": "documentation"'
       then
-        #echo "##vso[task.setvariable variable=prHasCILabel;isOutput=true]true"
-        echo "[INFO] fullci label found!"
+        echo "##vso[task.setvariable variable=prHasCILabel;isOutput=true]true"
+        echo "[INFO] documentation label found!"
       fi
-    displayName: 'Build'
+    displayName: Check for CI label build on PR
+    condition: eq(variables['Build.Reason'], 'Manual') # only run step if it is a PR
+    name: checkPrLabel
   # - task: CopyFiles@2
   #   inputs:
   #     sourceFolder: '$(Agent.BuildDirectory)/s/build/'
@@ -107,20 +107,21 @@ jobs:
   #     artifactName: '$(artifactName)'
 
 #   #############################################
-#   - job: MinGWBuilds
-#     strategy:
-#       matrix:
-#         MinGW_W64:
-#            COMPILER: 'MinGW Makefiles'
-#            ARCH: 'x86_64'
-#            USE_CSHARP: 'OFF'
-#            artifactName: 'Windows-MinGW-W64'
-#     pool:
-#       vmImage: 'windows-2022'
-#     steps:
-#     - checkout: self
-#       fetchDepth: 1
-#       clean: true
+- job: MinGWBuilds
+  dependsOn: LinuxBuilds
+  strategy:
+    matrix:
+      MinGW_W64:
+          COMPILER: 'MinGW Makefiles'
+          ARCH: 'x86_64'
+          USE_CSHARP: 'OFF'
+          artifactName: 'Windows-MinGW-W64'
+  pool:
+    vmImage: 'windows-2022'
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
 #     - task: UsePythonVersion@0
 #       inputs:
 #         versionSpec: '3.9'
